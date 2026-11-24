@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -134,7 +133,6 @@ fun IncomeExpenseScreen(
 				Box(
 					modifier = Modifier
 						.background(MaterialTheme.colorScheme.background)
-						.padding(16.dp)
 				) {
 					CategoriesList(
 						categories = state.allCategories,

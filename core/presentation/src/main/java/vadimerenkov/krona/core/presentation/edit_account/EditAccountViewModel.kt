@@ -49,17 +49,17 @@ class EditAccountViewModel(
 
 			EditAccountAction.OnSaveClick -> {
 				viewModelScope.launch {
-					repository.saveAccount(Account(
-						id = id,
-						currency = state.currency,
-						name = state.nameState.text.toString(),
-						initialAmount = state.initialAmountState.text.toString().toDouble(),
-						isDefault = state.isDefault
-					))
 					if (state.isDefault) {
 						val defaultAccount = repository.getDefaultAccount()
 						repository.saveAccount(defaultAccount.copy(isDefault = false))
 					}
+					repository.saveAccount(Account(
+						id = id,
+						currency = state.currency,
+						name = state.nameState.text.toString().trim(),
+						initialAmount = state.initialAmountState.text.toString().toDouble(),
+						isDefault = state.isDefault
+					))
 					eventChannel.send(EditAccountEvent.SavingFinished)
 				}
 			}
