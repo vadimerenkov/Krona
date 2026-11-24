@@ -91,7 +91,7 @@ fun OtherScreen(
 			modifier = Modifier.weight(1f)
 		)
 		val currentYear = Year.now()
-		val yearsString = if (currentYear.value == 2027) "2027" else "2027-${currentYear.value}"
+		val yearsString = if (currentYear.value == 2026) "2026" else "2026-${currentYear.value}"
 		val version = BuildConfig.VERSION_NAME
 		val handler = LocalUriHandler.current
 		Text(
