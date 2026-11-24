@@ -1,0 +1,97 @@
+package vadimerenkov.krona.core.presentation.debts
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.koin.compose.viewmodel.koinViewModel
+import vadimerenkov.krona.core.presentation.R
+import java.text.NumberFormat
+
+@Composable
+fun DebtsScreen(
+	viewModel: DebtsViewModel = koinViewModel()
+) {
+	DebtsScreenRoot(
+		state = viewModel.state
+	)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DebtsScreenRoot(
+	state: DebtsState
+) {
+	Scaffold(
+		topBar = {
+			TopAppBar(
+				title = {
+					Text(
+						text = stringResource(R.string.debts)
+					)
+				},
+				colors = TopAppBarDefaults.topAppBarColors(
+					containerColor = MaterialTheme.colorScheme.primaryContainer
+				)
+			)
+		}
+	) { innerPadding ->
+		if (state.persons.size == 1) {
+			Text(
+				text = stringResource(R.string.no_debts_yet),
+				color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+				modifier = Modifier
+					.fillMaxSize()
+					.wrapContentSize()
+			)
+		} else {
+			LazyColumn(
+				contentPadding = PaddingValues(16.dp),
+				modifier = Modifier
+					.padding(innerPadding)
+			) {
+				items(
+					items = state.persons,
+					key = { it.name }
+				) { person ->
+					if (!person.isMe) {
+						Row(
+							horizontalArrangement = Arrangement.spacedBy(16.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							val formatter = remember { NumberFormat.getInstance() }
+							Text(
+								text = person.name,
+								fontSize = 18.sp
+							)
+							Text(
+								text = formatter.format(person.amountOwed),
+								fontWeight = FontWeight.Bold,
+								color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+								fontSize = 18.sp
+							)
+						}
+					}
+				}
+			}
+		}
+	}
+}
