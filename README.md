@@ -18,6 +18,12 @@ Soon to come:
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M31PFBMQ)
 
+## Screenshots
+
+<img width="200" height="600" alt="Screenshot_20250703_120635" src="https://github.com/vadimerenkov/Krona/blob/main/screenshots/1.png" /> <img width="200" height="600" alt="Screenshot_20250703_120705" src="https://github.com/vadimerenkov/Krona/blob/main/screenshots/2.png" /> <img width="200" height="600" alt="Screenshot_20250703_120658" src="https://github.com/vadimerenkov/Krona/blob/main/screenshots/3.png" />  <img width="200" height="600" alt="Screenshot_20250731_215113" src="https://github.com/vadimerenkov/Krona/blob/main/screenshots/4.png" />
+
+
+
 ## Used libraries
 - [GitHub - patrykandpatrick/vico: A powerful and extensible chart library for Compose Multiplatform. · GitHub](https://github.com/patrykandpatrick/vico)
 
