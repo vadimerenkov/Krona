@@ -31,10 +31,10 @@ interface TransactionsDao {
 	@Query("SELECT * FROM transactiondata WHERE id = :id")
 	suspend fun getTransactionById(id: Long): TransactionData
 
-	@Query("SELECT * FROM transactiondata WHERE timestamp > :startDate AND timestamp < :endDate AND categoryId = :categoryId AND type = 'INCOME_EXPENSE'")
+	@Query("SELECT * FROM transactiondata WHERE timestamp > :startDate AND timestamp < :endDate AND categoryId = :categoryId AND type = 'INCOME_EXPENSE' ORDER BY timestamp DESC")
 	suspend fun getTransactionsForDateForCategory(startDate: Long, endDate: Long, categoryId: Long): List<TransactionData>
 
-	@Query("SELECT * FROM transactiondata WHERE timestamp > :startDate AND timestamp < :endDate AND categoryId IS NULL AND type = 'INCOME_EXPENSE'")
+	@Query("SELECT * FROM transactiondata WHERE timestamp > :startDate AND timestamp < :endDate AND categoryId IS NULL AND type = 'INCOME_EXPENSE' ORDER BY timestamp DESC")
 	suspend fun getTransactionsForDateWithoutCategory(startDate: Long, endDate: Long): List<TransactionData>
 
 	@Query("UPDATE transactiondata SET categoryId = :newCategoryId WHERE categoryId = :oldCategoryId")

@@ -142,22 +142,6 @@ class RoomLocalStatisticsRepository(
 		}.toMap()
 
 		val allTransactions = (mapOf(parentCategory to transactionsForParentCategory)) + transactionsForChildCategories
-		val sums = allTransactions.mapValues { (category, transactions) ->
-			transactions
-				.filter { it.amount <= 0 }
-				.sumOf { transaction ->
-					val accountCurrency = Currency.getInstance(accountsDao.getCurrencyForAccountId(transaction.accountId))
-					val amountInDefaultCurrency = exchangeRatesRepository.getAmountInCurrency(transaction.amount, accountCurrency, settings.state.value.defaultCurrency)
-					amountInDefaultCurrency ?: 0.0
-				}.absoluteValue
-		}
-		val filteredSums =  sums
-			.toList()
-			.sortedByDescending {
-				it.second
-			}
-			.toMap()
-			.filterValues { it != 0.0 }
 
 		return allTransactions
 			.mapValues { (category, list) ->

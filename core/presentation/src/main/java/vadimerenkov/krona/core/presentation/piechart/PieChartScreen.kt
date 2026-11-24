@@ -155,7 +155,9 @@ private fun PieChartRoot(
 							)
 						}
 					}
-					val grouped = state.transactions.groupBy { it.timestamp.toLocalDate() }
+					val grouped = state.transactions
+						.sortedByDescending { it.timestamp }
+						.groupBy { it.timestamp.toLocalDate() }
 					grouped.forEach { (date, transactions) ->
 						stickyHeader {
 							Text(
