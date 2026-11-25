@@ -11,5 +11,5 @@ data class EditAccountState(
 	val isDefaultEnabled: Boolean = true
 ) {
 	val isValid
-		get() = nameState.text.isNotBlank() && initialAmountState.text.toString().ifBlank { "0.0" }.toDoubleOrNull() != null
+		get() = nameState.text.isNotBlank() && initialAmountState.text.toString().ifBlank { "0.0" }.replace(',', '.').toDoubleOrNull() != null
 }

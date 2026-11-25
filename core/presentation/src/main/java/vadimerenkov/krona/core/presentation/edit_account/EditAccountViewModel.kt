@@ -57,7 +57,7 @@ class EditAccountViewModel(
 						id = id,
 						currency = state.currency,
 						name = state.nameState.text.toString().trim(),
-						initialAmount = state.initialAmountState.text.toString().toDouble(),
+						initialAmount = state.initialAmountState.text.toString().replace(',', '.').toDouble(),
 						isDefault = state.isDefault
 					))
 					eventChannel.send(EditAccountEvent.SavingFinished)
