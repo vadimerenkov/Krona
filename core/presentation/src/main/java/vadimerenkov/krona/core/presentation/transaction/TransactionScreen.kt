@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import org.koin.compose.viewmodel.koinViewModel
 import vadimerenkov.krona.core.domain.Account
 import vadimerenkov.krona.core.domain.Category
@@ -177,6 +178,7 @@ private fun TransactionRoot(
 				)
 				Row {
 					IconButton(
+						enabled = transaction.type != TransactionType.TRANSFER,
 						onClick = {
 							onAction(TransactionAction.OnEditClick)
 						}
@@ -225,9 +227,20 @@ private fun TransactionRoot(
 					CartesianChartHost(
 						chart = rememberCartesianChart(
 							rememberColumnCartesianLayer(),
-							startAxis = VerticalAxis.rememberStart(),
+							startAxis = VerticalAxis.rememberStart(
+								label = TextComponent(
+									textStyle = androidx.compose.ui.text.TextStyle(
+										color = MaterialTheme.colorScheme.onBackground
+									)
+								)
+							),
 							bottomAxis = HorizontalAxis.rememberBottom(
-								valueFormatter = bottomAxisFormatter
+								valueFormatter = bottomAxisFormatter,
+								label = TextComponent(
+									textStyle = androidx.compose.ui.text.TextStyle(
+										color = MaterialTheme.colorScheme.onBackground
+									)
+								)
 							)
 						),
 						modelProducer
