@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.TextComponent
-import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.pie.PieChart
 import com.patrykandpatrick.vico.compose.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.pie.PieSize
@@ -103,9 +102,9 @@ private fun PieChartRoot(
 									fill = Fill(color),
 									label = PieChart.SliceLabel.Outside(
 										textComponent = TextComponent(
-											textStyle = TextStyle(vicoTheme.textColor)
+											textStyle = TextStyle(MaterialTheme.colorScheme.onBackground)
 										),
-										lineColor = vicoTheme.textColor
+										lineColor = MaterialTheme.colorScheme.onBackground
 									)
 								)
 							}

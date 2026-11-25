@@ -47,12 +47,12 @@ class StatisticsViewModel(
 						} else {
 							null
 						}
-					}.filterNotNull().first()
+					}.filterNotNull().firstOrNull()
 				} else {
 					transaction.amount
 				}
 				val accountCurrency = transaction.account.currency
-				val amountInDefaultCurrency = exchangeRatesRepository.getAmountInCurrency(amount, accountCurrency, settings.state.value.defaultCurrency)
+				val amountInDefaultCurrency = exchangeRatesRepository.getAmountInCurrency(amount ?: 0.0, accountCurrency, settings.state.value.defaultCurrency)
 				amountInDefaultCurrency ?: 0.0
 			}.absoluteValue
 		}
