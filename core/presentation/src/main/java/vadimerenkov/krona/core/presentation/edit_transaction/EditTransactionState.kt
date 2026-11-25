@@ -32,18 +32,18 @@ data class EditTransactionState(
 	val isValid
 		get() = when (type) {
 			TransactionType.INCOME_EXPENSE -> {
-				amountState.text.toString().toDoubleOrNull() != null && amountState.text.toString().toDoubleOrNull() != 0.0
+				amountState.text.toString().replace(',', '.').toDoubleOrNull() != null && amountState.text.toString().replace(',', '.').toDoubleOrNull() != 0.0
 						&&
 						personAmounts.all { it.personState.text.toString().isNotBlank() }
 						&&
-						personAmounts.all { it.amountState.text.toString().toDoubleOrNull() != null }
+						personAmounts.all { it.amountState.text.toString().replace(',', '.').toDoubleOrNull() != null }
 			}
 			TransactionType.TRANSFER -> {
 				outgoingAccount != null && incomingAccount != null && outgoingAccount != incomingAccount
 						&&
-						outgoingAmount.text.toString().toDoubleOrNull() != null && outgoingAmount.text.toString().toDoubleOrNull() != 0.0
+						outgoingAmount.text.toString().replace(',', '.').toDoubleOrNull() != null && outgoingAmount.text.toString().replace(',', '.').toDoubleOrNull() != 0.0
 						&&
-						incomingAmount.text.toString().toDoubleOrNull() != null && incomingAmount.text.toString().toDoubleOrNull() != 0.0
+						incomingAmount.text.toString().replace(',', '.').toDoubleOrNull() != null && incomingAmount.text.toString().replace(',', '.').toDoubleOrNull() != 0.0
 			}
 		}
 

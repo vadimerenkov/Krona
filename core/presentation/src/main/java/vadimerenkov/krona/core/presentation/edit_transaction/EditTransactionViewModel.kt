@@ -163,7 +163,7 @@ class EditTransactionViewModel(
 				transactionsRepository.saveTransaction(Transaction(
 					id = id,
 					account = state.account!!,
-					amount = state.amountState.text.toString().toDouble(),
+					amount = state.amountState.text.toString().replace(',', '.').toDouble(),
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
 					category = state.category,
 					type = state.type,
@@ -184,13 +184,13 @@ class EditTransactionViewModel(
 			TransactionType.TRANSFER -> {
 				transactionsRepository.saveTransaction(Transaction(
 					account = state.outgoingAccount!!,
-					amount = -state.outgoingAmount.text.toString().toDouble(),
+					amount = -state.outgoingAmount.text.toString().replace(',', '.').toDouble(),
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
 					type = state.type
 				))
 				transactionsRepository.saveTransaction(Transaction(
 					account = state.incomingAccount!!,
-					amount = state.incomingAmount.text.toString().toDouble(),
+					amount = state.incomingAmount.text.toString().replace(',', '.').toDouble(),
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
 					type = state.type
 				))
