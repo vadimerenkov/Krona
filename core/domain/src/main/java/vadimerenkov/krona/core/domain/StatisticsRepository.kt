@@ -8,4 +8,5 @@ interface StatisticsRepository {
 	suspend fun get6MonthsStatsForTransaction(transaction: Transaction): List<Double>
 	fun getMonthStatsForAllCategories(): Flow<Map<Category?, Double>>
 	suspend fun getMonthStatsForCategory(monthStart: ZonedDateTime, monthEnd: ZonedDateTime, parentCategoryId: Long?): Map<Category?, List<Transaction>>
+	suspend fun getIncomeMonthStatsForCategory(monthStart: ZonedDateTime, monthEnd: ZonedDateTime, parentCategoryId: Long?): Map<Category?, List<Transaction>>
 }

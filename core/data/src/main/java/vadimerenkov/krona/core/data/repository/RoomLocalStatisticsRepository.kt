@@ -124,7 +124,6 @@ class RoomLocalStatisticsRepository(
 
 		val transactionsForParentCategory = if (parentCategory == null) {
 			val t = transactionsDao.getTransactionsForDateWithoutCategory(start, end)
-			println(t)
 			t
 		} else {
 			transactionsDao.getTransactionsForDateForCategory(start, end, parentCategory.id)
@@ -150,9 +149,56 @@ class RoomLocalStatisticsRepository(
 					.map { data ->
 						val account = accountsDao.getAccountById(data.accountId).toAccountWithAmount(0.0).toAccount()
 						val category = categories.find { it.id == data.categoryId }
-						val persons = Json.decodeFromString<List<String>>(data.payees).map { name ->
-							personDao.getPersonByName(name)?.toPerson()
-						}.filterNotNull()
+						val persons =
+							Json.decodeFromString<List<String>>(data.payees).mapNotNull { name ->
+								personDao.getPersonByName(name)?.toPerson()
+							}
+						data.toTransaction(account, category, persons)
+					}
+			}
+	}
+
+	override suspend fun getIncomeMonthStatsForCategory(
+		monthStart: ZonedDateTime,
+		monthEnd: ZonedDateTime,
+		parentCategoryId: Long?
+	): Map<Category?, List<Transaction>> {
+		val start = monthStart.toEpochSecond()
+		val end = monthEnd.toEpochSecond()
+		val categories = transactionsRepository.getCategories().first().flatten()
+		val parentCategory = categories.find { it.id == parentCategoryId }
+
+		val transactionsForParentCategory = if (parentCategory == null) {
+			val t = transactionsDao.getTransactionsForDateWithoutCategory(start, end)
+			t
+		} else {
+			transactionsDao.getTransactionsForDateForCategory(start, end, parentCategory.id)
+		}
+
+		val transactionsForChildCategories = if (parentCategory == null) {
+			val categoriesWithoutParents = categories.filter { it.parentCategory == null }
+			categoriesWithoutParents.map { category ->
+				category to category.getTransactionsForChildCategories(start, end)
+			}
+		} else {
+			parentCategory.childCategories.map { category ->
+				category to category.getTransactionsForChildCategories(start, end)
+			}
+		}.toMap()
+
+		val allTransactions = (mapOf(parentCategory to transactionsForParentCategory)) + transactionsForChildCategories
+
+		return allTransactions
+			.mapValues { (category, list) ->
+				list
+					.filter { it.amount >= 0 }
+					.map { data ->
+						val account = accountsDao.getAccountById(data.accountId).toAccountWithAmount(0.0).toAccount()
+						val category = categories.find { it.id == data.categoryId }
+						val persons =
+							Json.decodeFromString<List<String>>(data.payees).mapNotNull { name ->
+								personDao.getPersonByName(name)?.toPerson()
+							}
 						data.toTransaction(account, category, persons)
 					}
 			}

@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -93,6 +96,34 @@ private fun PieChartRoot(
 				modifier = Modifier
 					.padding(innerPadding)
 			) {
+				SingleChoiceSegmentedButtonRow(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(horizontal = 16.dp)
+				) {
+					SegmentedButton(
+						selected = state.type == StatType.EXPENSE,
+						onClick = {
+							onAction(PieChartAction.ChangeType(StatType.EXPENSE))
+						},
+						shape = SegmentedButtonDefaults.itemShape(0, 2)
+					) {
+						Text(
+							text = stringResource(R.string.expense)
+						)
+					}
+					SegmentedButton(
+						selected = state.type == StatType.INCOME,
+						onClick = {
+							onAction(PieChartAction.ChangeType(StatType.INCOME))
+						},
+						shape = SegmentedButtonDefaults.itemShape(1, 2)
+					) {
+						Text(
+							text = stringResource(R.string.income)
+						)
+					}
+				}
 				PieChartHost(
 					chart = rememberPieChart(
 						sliceProvider = PieChart.SliceProvider.series(

@@ -145,7 +145,7 @@ class EditTransactionViewModel(
 				val defaultCurrency = settings.state.value.defaultCurrency
 				val amounts = state.personAmounts
 					.mapNotNull { personAmount ->
-						personAmount.amountState.text.toString().toDoubleOrNull()
+						personAmount.amountState.text.toString().replace(',', '.').toDoubleOrNull()
 					}
 				val payees = state.personAmounts
 					.map { personAmount ->
@@ -157,7 +157,8 @@ class EditTransactionViewModel(
 					}
 					.zip(amounts) { person, amount ->
 						val amountInDefaultCurrency = exchangeRatesRepository.getAmountInCurrency(amount, state.account!!.currency, defaultCurrency) ?: 0.0
-						person.copy(amountOwed = person.amountOwed + amountInDefaultCurrency, lastUpdated = ZonedDateTime.now())
+						val amountOwed = if (id == 0L) person.amountOwed + amountInDefaultCurrency else person.amountOwed
+						person.copy(amountOwed = amountOwed, lastUpdated = ZonedDateTime.now())
 					}
 
 				transactionsRepository.saveTransaction(Transaction(
