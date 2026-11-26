@@ -2,6 +2,7 @@ package vadimerenkov.krona.core.presentation.piechart
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -46,6 +50,7 @@ import vadimerenkov.krona.core.presentation.R
 import vadimerenkov.krona.core.presentation.transactions_list.TransactionItem
 import vadimerenkov.krona.core.presentation.util.palette
 import java.text.NumberFormat
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -121,6 +126,37 @@ private fun PieChartRoot(
 					) {
 						Text(
 							text = stringResource(R.string.income)
+						)
+					}
+				}
+				LazyRow(
+					horizontalArrangement = Arrangement.spacedBy(8.dp),
+					reverseLayout = true
+				) {
+					items(
+						count = 200,
+						key = { it }
+					) { index ->
+						val monthFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
+						val currentMonth = YearMonth.now()
+						val previousMonth = currentMonth.minusMonths(index.toLong())
+						Text(
+							text = monthFormatter.format(previousMonth),
+							modifier = Modifier
+								.border(
+									width = 1.dp,
+									color = MaterialTheme.colorScheme.primary,
+									shape = CircleShape
+								)
+								.clip(CircleShape)
+								.background(
+									color = if (state.selectedMonth == previousMonth) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
+								)
+								.clickable {
+									onAction(PieChartAction.SelectMonth(previousMonth))
+								}
+								.padding(8.dp)
+
 						)
 					}
 				}

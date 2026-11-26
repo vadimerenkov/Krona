@@ -11,8 +11,6 @@ import vadimerenkov.krona.core.domain.ExchangeRatesRepository
 import vadimerenkov.krona.core.domain.StatisticsRepository
 import vadimerenkov.krona.core.domain.Transaction
 import vadimerenkov.krona.core.domain.settings.Settings
-import java.time.YearMonth
-import java.time.ZoneId
 import kotlin.math.absoluteValue
 
 class PieChartViewModel(
@@ -21,16 +19,12 @@ class PieChartViewModel(
 	private val settings: Settings
 ): ViewModel() {
 
-	val currentMonth = YearMonth.now()
-	val start = currentMonth.atDay(1).atStartOfDay().atZone(ZoneId.systemDefault())
-	val end = currentMonth.atEndOfMonth().atTime(23, 59).atZone(ZoneId.systemDefault())
-
 	var state by mutableStateOf(PieChartState())
 
 	init {
 		viewModelScope.launch {
 			val stats = statisticsRepository
-				.getMonthStatsForCategory(start, end, null)
+				.getMonthStatsForCategory(state.start, state.end, null)
 			state = state.copy(statsForMonth = stats.mapTransactionsToAmount(), isLoading = false, transactions = stats.values.flatten())
 		}
 	}
@@ -41,8 +35,8 @@ class PieChartViewModel(
 				println(action.categoryId)
 				viewModelScope.launch {
 					val stats = when (state.type) {
-						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(start, end, action.categoryId)
-						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(start, end, action.categoryId)
+						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(state.start, state.end, action.categoryId)
+						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(state.start, state.end, action.categoryId)
 					}
 					val backStack = if (state.categoriesBackStack.lastOrNull() == action.categoryId) {
 						state.categoriesBackStack
@@ -56,8 +50,8 @@ class PieChartViewModel(
 				viewModelScope.launch {
 					val backstack = state.categoriesBackStack - state.categoriesBackStack.lastOrNull()
 					val stats = when (state.type) {
-						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(start, end, backstack.lastOrNull())
-						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(start, end, backstack.lastOrNull())
+						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(state.start, state.end, backstack.lastOrNull())
+						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(state.start, state.end, backstack.lastOrNull())
 					}
 					state = state.copy(statsForMonth = stats.mapTransactionsToAmount(), categoriesBackStack = backstack, transactions = stats.values.flatten())
 				}
@@ -65,10 +59,21 @@ class PieChartViewModel(
 			is PieChartAction.ChangeType -> {
 				viewModelScope.launch {
 					val stats = when (action.type) {
-						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(start, end, null)
-						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(start, end, null)
+						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(state.start, state.end, null)
+						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(state.start, state.end, null)
 					}
 					state = state.copy(statsForMonth = stats.mapTransactionsToAmount(), type = action.type, transactions = stats.values.flatten())
+				}
+			}
+
+			is PieChartAction.SelectMonth -> {
+				viewModelScope.launch {
+					state = state.copy(selectedMonth = action.month)
+					val stats = when (state.type) {
+						StatType.EXPENSE -> statisticsRepository.getMonthStatsForCategory(state.start, state.end, null)
+						StatType.INCOME -> statisticsRepository.getIncomeMonthStatsForCategory(state.start, state.end, null)
+					}
+					state = state.copy(statsForMonth = stats.mapTransactionsToAmount(), transactions = stats.values.flatten())
 				}
 			}
 		}
