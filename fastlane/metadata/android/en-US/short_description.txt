@@ -1,0 +1,1 @@
+Krona is a financial manager and expense tracker app.
