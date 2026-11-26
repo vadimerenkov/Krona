@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.koin.compose.viewmodel.koinViewModel
-import vadimerenkov.krona.core.domain.TransactionType
 import vadimerenkov.krona.core.presentation.R
 import vadimerenkov.krona.core.presentation.util.ObserveAsEvents
 import java.time.LocalTime
@@ -44,7 +43,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun EditTransactionScreen(
+internal fun EditTransactionScreen(
 	onBackClick: () -> Unit,
 	viewModel: EditTransactionViewModel = koinViewModel()
 ) {
@@ -80,22 +79,33 @@ private fun EditTransactionRoot(
 					.fillMaxWidth()
 			) {
 				SegmentedButton(
-					selected = state.type == TransactionType.INCOME_EXPENSE,
+					selected = state.type == InputType.EXPENSE,
 					onClick = {
-						onAction(EditTransactionAction.ChangeType(TransactionType.INCOME_EXPENSE))
+						onAction(EditTransactionAction.ChangeType(InputType.EXPENSE))
 					},
-					shape = SegmentedButtonDefaults.itemShape(0, 2)
+					shape = SegmentedButtonDefaults.itemShape(0, 3)
 				) {
 					Text(
-						text = stringResource(R.string.income_expense)
+						text = stringResource(R.string.expense)
 					)
 				}
 				SegmentedButton(
-					selected = state.type == TransactionType.TRANSFER,
+					selected = state.type == InputType.INCOME,
 					onClick = {
-						onAction(EditTransactionAction.ChangeType(TransactionType.TRANSFER))
+						onAction(EditTransactionAction.ChangeType(InputType.INCOME))
 					},
-					shape = SegmentedButtonDefaults.itemShape(1, 2)
+					shape = SegmentedButtonDefaults.itemShape(1, 3)
+				) {
+					Text(
+						text = stringResource(R.string.income)
+					)
+				}
+				SegmentedButton(
+					selected = state.type == InputType.TRANSFER,
+					onClick = {
+						onAction(EditTransactionAction.ChangeType(InputType.TRANSFER))
+					},
+					shape = SegmentedButtonDefaults.itemShape(2, 3)
 				) {
 					Text(
 						text = stringResource(R.string.transfer)
@@ -104,13 +114,13 @@ private fun EditTransactionRoot(
 			}
 
 			when (state.type) {
-				TransactionType.INCOME_EXPENSE -> {
+				InputType.EXPENSE, InputType.INCOME -> {
 					IncomeExpenseScreen(
 						state = state,
 						onAction = onAction
 					)
 				}
-				TransactionType.TRANSFER -> {
+				InputType.TRANSFER -> {
 					TransferScreen(
 						state = state,
 						onAction = onAction

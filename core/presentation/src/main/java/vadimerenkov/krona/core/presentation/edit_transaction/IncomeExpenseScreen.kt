@@ -42,7 +42,7 @@ import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IncomeExpenseScreen(
+internal fun IncomeExpenseScreen(
 	state: EditTransactionState,
 	onAction: (EditTransactionAction) -> Unit
 ) {
@@ -60,6 +60,13 @@ fun IncomeExpenseScreen(
 				Text(
 					text = "0.0"
 				)
+			},
+			prefix = {
+				if (state.type == InputType.EXPENSE) {
+					Text(
+						text = "-"
+					)
+				}
 			},
 			modifier = Modifier
 				.fillMaxWidth()

@@ -33,7 +33,7 @@ import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferScreen(
+internal fun TransferScreen(
 	state: EditTransactionState,
 	onAction: (EditTransactionAction) -> Unit
 ) {

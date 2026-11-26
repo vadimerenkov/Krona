@@ -69,7 +69,7 @@
     <string name="edit_transaction">Edit transaction</string>
     <string name="no_statistics">You don\'t yet have the stats for this month.</string>
     <string name="edit_account">Edit account</string>
-    <string name="expense">Expenses</string>
+    <string name="expense">Expense</string>
 
     <string name="food">Food</string>
     <string name="groceries">Groceries</string>

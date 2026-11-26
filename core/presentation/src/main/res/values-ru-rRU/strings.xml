@@ -68,6 +68,7 @@
     <string name="edit_transaction">Редактировать транзакцию</string>
     <string name="no_statistics">У вас пока нет статистики за этот месяц.</string>
     <string name="edit_account">Редактировать счет</string>
+    <string name="expense">Расход</string>
 
     <string name="food">Еда</string>
     <string name="groceries">Продукты</string>

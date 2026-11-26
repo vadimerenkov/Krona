@@ -23,7 +23,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class EditTransactionViewModel(
+internal class EditTransactionViewModel(
 	val id: Long,
 	private val transactionsRepository: TransactionsRepository,
 	private val exchangeRatesRepository: ExchangeRatesRepository,
@@ -74,7 +74,13 @@ class EditTransactionViewModel(
 				category = transaction?.category,
 				date = transaction?.timestamp?.toLocalDate() ?: LocalDate.now(),
 				time = transaction?.timestamp?.toLocalTime() ?: LocalTime.now(),
-				type = transaction?.type ?: TransactionType.INCOME_EXPENSE,
+				type = when (transaction?.type) {
+					TransactionType.INCOME_EXPENSE -> {
+						if (transaction.amount > 0) InputType.INCOME else InputType.EXPENSE
+					}
+					TransactionType.TRANSFER -> InputType.TRANSFER
+					null -> InputType.EXPENSE
+				},
 				personAmounts = personAmounts
 			)
 		}
@@ -141,7 +147,7 @@ class EditTransactionViewModel(
 
 	suspend fun saveTransactions() {
 		when (state.type) {
-			TransactionType.INCOME_EXPENSE -> {
+			InputType.EXPENSE, InputType.INCOME -> {
 				val defaultCurrency = settings.state.value.defaultCurrency
 				val amounts = state.personAmounts
 					.mapNotNull { personAmount ->
@@ -161,13 +167,18 @@ class EditTransactionViewModel(
 						person.copy(amountOwed = amountOwed, lastUpdated = ZonedDateTime.now())
 					}
 
+				val amount = if (state.type == InputType.EXPENSE) {
+					-state.amountState.text.toString().replace(',', '.').toDouble()
+				} else {
+					state.amountState.text.toString().replace(',', '.').toDouble()
+				}
 				transactionsRepository.saveTransaction(Transaction(
 					id = id,
 					account = state.account!!,
-					amount = state.amountState.text.toString().replace(',', '.').toDouble(),
+					amount = amount,
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
 					category = state.category,
-					type = state.type,
+					type = TransactionType.INCOME_EXPENSE,
 					place = state.placeState.text.toString().ifBlank { null },
 					note = state.noteState.text.toString().ifBlank { null },
 					payees = payees,
@@ -182,18 +193,18 @@ class EditTransactionViewModel(
 					))
 				}
 			}
-			TransactionType.TRANSFER -> {
+			InputType.TRANSFER -> {
 				transactionsRepository.saveTransaction(Transaction(
 					account = state.outgoingAccount!!,
 					amount = -state.outgoingAmount.text.toString().replace(',', '.').toDouble(),
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
-					type = state.type
+					type = TransactionType.TRANSFER
 				))
 				transactionsRepository.saveTransaction(Transaction(
 					account = state.incomingAccount!!,
 					amount = state.incomingAmount.text.toString().replace(',', '.').toDouble(),
 					timestamp = state.date.atTime(state.time).atZone(ZoneId.systemDefault()),
-					type = state.type
+					type = TransactionType.TRANSFER
 				))
 			}
 		}
