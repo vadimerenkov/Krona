@@ -5,12 +5,11 @@ import vadimerenkov.krona.core.domain.Account
 import vadimerenkov.krona.core.domain.Category
 import vadimerenkov.krona.core.domain.Person
 import vadimerenkov.krona.core.domain.Place
-import vadimerenkov.krona.core.domain.TransactionType
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-data class EditTransactionState(
+internal data class EditTransactionState(
 	val amountState: TextFieldState = TextFieldState(),
 	val category: Category? = null,
 	val account: Account? = null,
@@ -20,7 +19,7 @@ data class EditTransactionState(
 	val time: LocalTime = LocalTime.now().truncatedTo(ChronoUnit.MINUTES),
 	val allAccounts: List<Account> = emptyList(),
 	val allCategories: List<Category> = emptyList(),
-	val type: TransactionType = TransactionType.INCOME_EXPENSE,
+	val type: InputType = InputType.EXPENSE,
 	val outgoingAccount: Account? = null,
 	val incomingAccount: Account? = null,
 	val outgoingAmount: TextFieldState = TextFieldState(),
@@ -31,14 +30,14 @@ data class EditTransactionState(
 ) {
 	val isValid
 		get() = when (type) {
-			TransactionType.INCOME_EXPENSE -> {
+			InputType.EXPENSE, InputType.INCOME -> {
 				amountState.text.toString().replace(',', '.').toDoubleOrNull() != null && amountState.text.toString().replace(',', '.').toDoubleOrNull() != 0.0
 						&&
 						personAmounts.all { it.personState.text.toString().isNotBlank() }
 						&&
 						personAmounts.all { it.amountState.text.toString().replace(',', '.').toDoubleOrNull() != null }
 			}
-			TransactionType.TRANSFER -> {
+			InputType.TRANSFER -> {
 				outgoingAccount != null && incomingAccount != null && outgoingAccount != incomingAccount
 						&&
 						outgoingAmount.text.toString().replace(',', '.').toDoubleOrNull() != null && outgoingAmount.text.toString().replace(',', '.').toDoubleOrNull() != 0.0
@@ -58,4 +57,10 @@ data class EditTransactionState(
 		get() {
 			return (amountState.text.toString().toDoubleOrNull() ?: 0.0) - totalSplitAmount
 		}
+}
+
+internal enum class InputType {
+	EXPENSE,
+	INCOME,
+	TRANSFER
 }
