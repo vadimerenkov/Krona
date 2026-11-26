@@ -31,7 +31,7 @@ android {
 		}
 	}
 	defaultConfig {
-		val apiKey = localProperties.getProperty("EXCHANGE_RATES_API_KEY")
+		val apiKey = localProperties.getProperty("EXCHANGE_RATES_API_KEY") ?: ""
 		buildConfigField("String", "EXCHANGE_RATES_API_KEY", apiKey)
 	}
 }
